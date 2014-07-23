@@ -1,0 +1,4 @@
+docker push nitrogen/api
+docker push nitrogen/mongodb
+docker push nitrogen/rabbitmq
+docker push nitrogen/redis

@@ -1,0 +1,4 @@
+cd containers/api && ./build-container && cd ../..
+cd containers/mongodb && ./build-container && cd ../..
+cd containers/rabbitmq && ./build-container && cd ../..
+cd containers/redis && ./build-container && cd ../..
