@@ -1,0 +1,23 @@
+// create frontdoor cluster
+    // ROLE: spec for docker container (eg. frontdoor)
+    // ENVIRONMENT (eg. 5): spec for number of instances
+    // ENVIRONMENT (eg. ): spec for cloud service name
+
+    // carrier creates cloud-init .yml file with symlinks to container units files, deploy-cluster, and upgrade-app script
+    // http://marceldegraaf.net/2014/04/24/experimenting-with-coreos-confd-etcd-fleet-and-cloudformation.html
+
+    // deploy-cluster script:
+    //    creates cloud service
+    //    creates vm instances
+    //    spins up containers
+    //    opens and load balances ports
+
+    // upgrade-app script:
+    //    for each container:
+    //        runs fleetctl stop
+    //
+    //        runs fleetctl start on
+
+// create ingest cluster
+// create registry cluster
+// create consumption cluster

@@ -1,0 +1,10 @@
+[Unit]
+Description=Nitrogen Redis Announce 1 
+BindsTo=redis.1.service
+
+[Service]
+ExecStart=/bin/sh -c "while true; do etcdctl set /n2/redis/1 '{ \"host\": \"%H\", \"port\": 6379 }' --ttl 60; sleep 45; done"
+ExecStop=/usr/bin/etcdctl rm /n2/redis/1
+
+[X-Fleet]
+X-ConditionMachineOf=redis.1.service

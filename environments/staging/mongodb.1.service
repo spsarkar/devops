@@ -1,0 +1,11 @@
+[Unit]
+Description=Nitrogen MongoDB
+After=docker.service
+Requires=docker.service
+
+[Service]
+ExecStart=/usr/bin/docker run --rm --name mongodb -p 27017:27017 -p 28017:28017 nitrogen/mongodb mongod --rest --httpinterface
+ExecStop=/usr/bin/docker rm -f mongodb
+
+[X-Fleet]
+X-Conflicts=mongodb.*.service

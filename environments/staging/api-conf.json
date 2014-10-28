@@ -1,0 +1,7 @@
+{
+    "container": "nitrogen/api",
+    "instances": 5,
+    "config": {
+        "cloud-service-name": "api-staging"
+    }
+}
