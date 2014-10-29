@@ -1,0 +1,88 @@
+#!/usr/bin/env node
+
+var async = require('async')
+  , fs = require('fs')
+  , mustache = require('mustache')
+  , request = require('request')
+  , yargs = require('yargs');
+
+var environmentPath = 'environments/' + yargs.argv._[0] + '/';
+var config = JSON.parse(fs.readFileSync(environmentPath + 'config.json', 'utf8'));
+
+var generateClusters = function(clusters) {
+    var generationScript = "";
+
+    async.reduce(clusters, "", function(memo, cluster, callback) {
+        console.log('generating cluster config files for ' + cluster.name);
+
+        generateCluster(cluster, function(err, script) {
+            console.log(script);
+
+            return callback(err, memo + script);
+        });
+    }, function(err, generationScript) {
+        if (err) return console.log(err);
+
+        fs.writeFileSync(environmentPath + 'create-cluster', generationScript);
+    });
+};
+
+var generateCluster = function(cluster, callback) {
+    var unitTemplate = fs.readFileSync('environments/common/unit@.service', 'utf8');
+
+    var unitContext = {
+        container: cluster.container,
+        description: cluster.name,
+        name: cluster.name
+    };
+
+    var unitFile = mustache.render(unitTemplate, unitContext);
+    fs.writeFileSync(environmentPath + cluster.name + "@.service", unitFile);
+
+    var generationScript = "azure service create --affinitygroup " + cluster.config.affinityGroup + " " + cluster.config.cloudServiceName + "\n";
+
+    // create discovery token for cluster
+    request('https://discovery.etcd.io/new', function(err, response, discoveryToken) {
+        if (err) return callback(err);
+
+        var cloudConfigContext = {
+            discoveryToken: unescape(discoveryToken),
+            sshAuthorizedKey: fs.readFileSync('keys/ssh-authorized.key', 'utf8')
+        };
+
+        var cloudConfigTemplate = fs.readFileSync('environments/common/cloud-config.yml', 'utf8');
+        var clusterMachineTemplate = fs.readFileSync('environments/common/cluster-machine', 'utf8');
+
+        for (var idx=1; idx <= cluster.instances; idx++) {
+            console.log('building config for instance: ' + idx);
+
+            cloudConfigContext.name = cluster.name + "-" + idx;
+            cloudConfigContext.hostname = cloudConfigContext.name;
+
+            var cloudConfig = mustache.render(cloudConfigTemplate, cloudConfigContext);
+
+            var clusterMachineContext = cluster.config;
+
+            clusterMachineContext.cloudConfigFilename = cloudConfigContext.name + ".yml";
+            clusterMachineContext.hostname = cloudConfigContext.hostname;
+
+            fs.writeFileSync(environmentPath + clusterMachineContext.cloudConfigFilename, cloudConfig);
+
+            if (idx > 1)
+                clusterMachineContext.connect = "--connect \\";
+            else
+                clusterMachineContext.connect = "\\";
+
+            clusterMachineContext.vmName = cloudConfigContext.hostname;
+            clusterMachineContext.sshPort = 20000 + idx;
+
+            var machineScript = mustache.render(clusterMachineTemplate, clusterMachineContext);
+
+            generationScript += machineScript;
+        }
+
+        return callback(null, generationScript);
+    });
+};
+
+generateClusters(config.clusters);

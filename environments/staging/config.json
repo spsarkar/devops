@@ -1,0 +1,56 @@
+{
+    "clusters": [
+        {
+            "container": "nitrogen/frontdoor",
+            "instances": 2,
+            "name": "frontdoor",
+            "config": {
+                "affinityGroup": "n2-affinity",
+                "availabilitySet": "n2-frontdoor-staging-as",
+                "cloudServiceName": "n2-api-staging",
+                "loadBalancingSet": "frontdoorHttp",
+                "subnetName": "VMs",
+                "virtualNetwork": "n2-network"
+            }
+        },
+        {
+            "container": "nitrogen/ingestion",
+            "instances": 2,
+            "name": "ingestion",
+            "config": {
+                "affinityGroup": "n2-affinity",
+                "availabilitySet": "n2-ingestion-staging-as",
+                "cloudServiceName": "n2-ingestion-staging",
+                "loadBalancingSet": "ingestionHttp",
+                "subnetName": "VMs",
+                "virtualNetwork": "n2-network"
+            }
+        },
+        {
+            "container": "nitrogen/registry",
+            "instances": 2,
+            "name": "registry",
+            "config": {
+                "affinityGroup": "n2-affinity",
+                "availabilitySet": "n2-registry-staging-as",
+                "cloudServiceName": "n2-registry-staging",
+                "loadBalancingSet": "registryHttp",
+                "subnetName": "VMs",
+                "virtualNetwork": "n2-network"
+            }
+        },
+        {
+            "container": "nitrogen/consumption",
+            "instances": 2,
+            "name": "consumption",
+            "config": {
+                "affinityGroup": "n2-affinity",
+                "availabilitySet": "n2-consumption-staging-as",
+                "cloudServiceName": "n2-consumption-staging",
+                "loadBalancingSet": "consumptionHttp",
+                "subnetName": "VMs",
+                "virtualNetwork": "n2-network"
+            }
+        }
+    ]
+}
