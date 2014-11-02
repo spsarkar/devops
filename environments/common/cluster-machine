@@ -1,15 +1,3 @@
-azure vm create \
-{{{cloudServiceName}}} \
-2b171e93f07c4903bcad35bda10acf22__CoreOS-Alpha-475.1.0 \
-core \
-{{{connect}}}
---vm-size Small \
---vm-name {{{hostname}}} \
---availability-set {{{availabilitySet}}} \
---ssh {{{sshPort}}} \
---ssh-cert ../../keys/ssh-cert.pem \
---no-ssh-password \
---virtual-network-name {{{virtualNetwork}}} \
---custom-data {{{cloudConfigFilename}}}
+azure vm create {{{cloudServiceName}}} 2b171e93f07c4903bcad35bda10acf22__CoreOS-Alpha-475.1.0 core {{{connect}}} --vm-size small --vm-name {{{hostname}}} --availability-set {{{availabilitySet}}} --ssh {{{sshPort}}} --ssh-cert ../../keys/ssh-cert.pem --no-ssh-password --virtual-network-name {{{virtualNetwork}}} --subnet-names api --custom-data {{{cloudConfigFilename}}}
 
 azure vm endpoint --lb-set-name {{{loadBalancingSet}}} create {{{hostname}}} 80 80
