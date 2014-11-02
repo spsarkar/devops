@@ -1,55 +1,49 @@
 {
+    "location": "East US",
+    "virtualNetwork": "n2-network-staging",
     "clusters": [
         {
             "container": "nitrogen/frontdoor",
+            "type": "frontdoor",
             "instances": 2,
-            "name": "frontdoor",
+            "name": "n2-frontdoor-staging",
             "config": {
-                "affinityGroup": "n2-affinity",
                 "availabilitySet": "n2-frontdoor-staging-as",
                 "cloudServiceName": "n2-api-staging",
-                "loadBalancingSet": "frontdoorHttp",
-                "subnetName": "VMs",
-                "virtualNetwork": "n2-network"
+                "loadBalancingSet": "frontdoorHttp"
             }
         },
         {
             "container": "nitrogen/ingestion",
+            "type": "ingestion",
             "instances": 2,
-            "name": "ingestion",
+            "name": "n2-ingestion-staging",
             "config": {
-                "affinityGroup": "n2-affinity",
                 "availabilitySet": "n2-ingestion-staging-as",
                 "cloudServiceName": "n2-ingestion-staging",
-                "loadBalancingSet": "ingestionHttp",
-                "subnetName": "VMs",
-                "virtualNetwork": "n2-network"
+                "loadBalancingSet": "ingestionHttp"
             }
         },
         {
             "container": "nitrogen/registry",
+            "type": "registry",
             "instances": 2,
-            "name": "registry",
+            "name": "n2-registry-staging",
             "config": {
-                "affinityGroup": "n2-affinity",
                 "availabilitySet": "n2-registry-staging-as",
                 "cloudServiceName": "n2-registry-staging",
-                "loadBalancingSet": "registryHttp",
-                "subnetName": "VMs",
-                "virtualNetwork": "n2-network"
+                "loadBalancingSet": "registryHttp"
             }
         },
         {
             "container": "nitrogen/consumption",
+            "type": "consumption",
             "instances": 2,
-            "name": "consumption",
+            "name": "n2-consumption-staging",
             "config": {
-                "affinityGroup": "n2-affinity",
                 "availabilitySet": "n2-consumption-staging-as",
                 "cloudServiceName": "n2-consumption-staging",
-                "loadBalancingSet": "consumptionHttp",
-                "subnetName": "VMs",
-                "virtualNetwork": "n2-network"
+                "loadBalancingSet": "consumptionHttp"
             }
         }
     ]

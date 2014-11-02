@@ -8,22 +8,27 @@ var async = require('async')
 
 var environmentPath = 'environments/' + yargs.argv._[0] + '/';
 var config = JSON.parse(fs.readFileSync(environmentPath + 'config.json', 'utf8'));
+//var etcdVars = JSON.parse(fs.readFileSync(environmentPath + 'etcd.json', 'utf8'));
+
+var discoveryToken;
 
 var generateClusters = function(clusters) {
-    var generationScript = "";
+    var generationScriptTemplate = fs.readFileSync('environments/common/cluster-create', 'utf8');
+    var generationScript = mustache.render(generationScriptTemplate, config);
 
-    async.reduce(clusters, "", function(memo, cluster, callback) {
+    async.reduce(clusters, generationScript, function(memo, cluster, callback) {
         console.log('generating cluster config files for ' + cluster.name);
 
         generateCluster(cluster, function(err, script) {
-            console.log(script);
-
             return callback(err, memo + script);
         });
     }, function(err, generationScript) {
         if (err) return console.log(err);
 
-        fs.writeFileSync(environmentPath + 'create-cluster', generationScript);
+        var createClusterPath = environmentPath + 'create-cluster';
+
+        fs.writeFileSync(createClusterPath, generationScript);
+        fs.chmodSync(createClusterPath, 0755);
     });
 };
 
@@ -33,56 +38,76 @@ var generateCluster = function(cluster, callback) {
     var unitContext = {
         container: cluster.container,
         description: cluster.name,
-        name: cluster.name
+        name: cluster.name,
+        type: cluster.type
     };
 
     var unitFile = mustache.render(unitTemplate, unitContext);
     fs.writeFileSync(environmentPath + cluster.name + "@.service", unitFile);
 
-    var generationScript = "azure service create --affinitygroup " + cluster.config.affinityGroup + " " + cluster.config.cloudServiceName + "\n";
+    var generationScript = "";
 
     // create discovery token for cluster
-    request('https://discovery.etcd.io/new', function(err, response, discoveryToken) {
-        if (err) return callback(err);
+    var cloudConfigContext = {
+        discoveryToken: unescape(discoveryToken),
+        sshAuthorizedKey: fs.readFileSync('keys/ssh-authorized.key', 'utf8')
+    };
 
-        var cloudConfigContext = {
-            discoveryToken: unescape(discoveryToken),
-            sshAuthorizedKey: fs.readFileSync('keys/ssh-authorized.key', 'utf8')
-        };
+    if (['ingestion', 'registry', 'frontdoor', 'consumption'].indexOf(cluster.type) !== -1) {
+        cloudConfigContext.metadata = 'type=' + cluster.type;
+    }
 
-        var cloudConfigTemplate = fs.readFileSync('environments/common/cloud-config.yml', 'utf8');
-        var clusterMachineTemplate = fs.readFileSync('environments/common/cluster-machine', 'utf8');
+    var cloudConfigTemplate = fs.readFileSync('environments/common/cloud-config.yml', 'utf8');
+    var clusterMachineTemplate = fs.readFileSync('environments/common/cluster-machine', 'utf8');
 
-        for (var idx=1; idx <= cluster.instances; idx++) {
-            console.log('building config for instance: ' + idx);
+    for (var idx=1; idx <= cluster.instances; idx++) {
+        generationScript += 'azure vm delete ' + cluster.name + "-" + idx + "\n";
+    }
 
-            cloudConfigContext.name = cluster.name + "-" + idx;
-            cloudConfigContext.hostname = cloudConfigContext.name;
+    generationScript += 'azure service delete ' + cluster.config.cloudServiceName + "\n";
+    generationScript += 'azure service create ' + cluster.config.cloudServiceName + ' --location "' + config.location + '"\n\n';
 
-            var cloudConfig = mustache.render(cloudConfigTemplate, cloudConfigContext);
+    for (var idx=1; idx <= cluster.instances; idx++) {
+        console.log('building config for instance: ' + idx);
 
-            var clusterMachineContext = cluster.config;
+        cloudConfigContext.name = cluster.name + "-" + idx;
+        cloudConfigContext.hostname = cloudConfigContext.name;
 
-            clusterMachineContext.cloudConfigFilename = cloudConfigContext.name + ".yml";
-            clusterMachineContext.hostname = cloudConfigContext.hostname;
+        var cloudConfig = mustache.render(cloudConfigTemplate, cloudConfigContext);
 
-            fs.writeFileSync(environmentPath + clusterMachineContext.cloudConfigFilename, cloudConfig);
+        var clusterMachineContext = cluster.config;
 
-            if (idx > 1)
-                clusterMachineContext.connect = "--connect \\";
-            else
-                clusterMachineContext.connect = "\\";
+        clusterMachineContext.cloudConfigFilename = cloudConfigContext.name + ".yml";
+        clusterMachineContext.hostname = cloudConfigContext.hostname;
 
-            clusterMachineContext.vmName = cloudConfigContext.hostname;
-            clusterMachineContext.sshPort = 20000 + idx;
+        fs.writeFileSync(environmentPath + clusterMachineContext.cloudConfigFilename, cloudConfig);
 
-            var machineScript = mustache.render(clusterMachineTemplate, clusterMachineContext);
+        if (idx > 1)
+            clusterMachineContext.connect = "--connect";
+        else
+            clusterMachineContext.connect = "";
 
-            generationScript += machineScript;
-        }
+        clusterMachineContext.sshPort = 22000 + idx;
+        clusterMachineContext.virtualNetwork = config.virtualNetwork;
+        clusterMachineContext.vmName = cloudConfigContext.hostname;
 
-        return callback(null, generationScript);
-    });
+        var machineScript = mustache.render(clusterMachineTemplate, clusterMachineContext);
+
+        generationScript += machineScript;
+    }
+
+    generationScript += "\n";
+    generationScript += "echo '=======> finished creation of " + cluster.name + "'\n";
+    generationScript += "\n";
+
+    return callback(null, generationScript);
 };
 
-generateClusters(config.clusters);
+console.log('fetching cluster discovery token');
+request('https://discovery.etcd.io/new', function(err, response, body) {
+    if (err) return console.log(err);
+
+    discoveryToken = body;
+
+    generateClusters(config.clusters);
+});

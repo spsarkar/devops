@@ -13,4 +13,5 @@ Restart=always
 RestartSec=10s
 
 [X-Fleet]
-X-Conflicts={{{name}}}@*.service
+MachineMetadata=type={{{type}}}
+Conflicts={{{name}}}@*.service

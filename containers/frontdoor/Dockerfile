@@ -1,4 +1,4 @@
-FROM timpark/nodejs
+FROM nitrogen/nodejs
 MAINTAINER Tim Park <tpark@microsoft.com>
 
 RUN mkdir /var/www

@@ -1,0 +1,2 @@
+#azure account affinity-group create {{affinityGroup}} -l "{{location}}"
+#azure network vnet create {{virtualNetwork}} --affinity-group {{affinityGroup}} -v
