@@ -1,0 +1,12 @@
+cd consumption
+./build-container
+./push-container
+cd ../registry
+./build-container
+./push-container
+cd ../ingestion
+./build-container
+./push-container
+cd ../frontdoor
+./build-container
+./push-container

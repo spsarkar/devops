@@ -1,1 +1,1 @@
-docker build --rm -t 'nitrogen/ingestion' .
+docker build --rm -t 'nitrogen/ingestion:latest' .

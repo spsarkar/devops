@@ -1,1 +1,1 @@
-docker push nitrogen/nodejs
+docker push nitrogen/nodejs:latest

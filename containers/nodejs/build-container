@@ -1,1 +1,1 @@
-docker build --rm -t 'nitrogen/nodejs' .
+docker build -t 'nitrogen/nodejs:latest' .

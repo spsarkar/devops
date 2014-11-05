@@ -1,1 +1,1 @@
-docker push nitrogen/ingestion
+docker push nitrogen/ingestion:latest

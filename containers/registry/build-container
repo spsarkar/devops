@@ -1,1 +1,1 @@
-docker build --rm -t 'nitrogen/registry' .
+docker build --rm -t 'nitrogen/registry:latest' .

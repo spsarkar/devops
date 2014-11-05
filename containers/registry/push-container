@@ -1,1 +1,1 @@
-docker push nitrogen/registry
+docker push nitrogen/registry:latest

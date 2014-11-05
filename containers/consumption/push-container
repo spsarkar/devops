@@ -1,1 +1,1 @@
-docker push nitrogen/consumption
+docker push nitrogen/consumption:latest

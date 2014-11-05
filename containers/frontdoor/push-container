@@ -1,1 +1,1 @@
-docker push nitrogen/frontdoor
+docker push nitrogen/frontdoor:latest

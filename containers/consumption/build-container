@@ -1,1 +1,1 @@
-docker build --rm -t 'nitrogen/consumption' .
+docker build --rm -t 'nitrogen/consumption:latest' .
