@@ -4,8 +4,8 @@ cd /var/www
 rm -rf frontdoor; true
 
 # install latest nodejs server
-git clone http://github.com/nitrogen/frontdoor frontdoor
-cd frontdoor
+git clone http://github.com/nitrogen/ingestion ingestion 
+cd ingestion 
 npm install
 
 export MONGODB_CONNECTION_STRING=`etcdctl get /nitrogen/mongodb_connection_string`
