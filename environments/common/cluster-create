@@ -1,2 +1,6 @@
-#azure account affinity-group create {{affinityGroup}} -l "{{location}}"
-#azure network vnet create {{virtualNetwork}} --affinity-group {{affinityGroup}} -v
+#azure account affinity-group create {{{affinityGroup}}{} -l "{{{location}}}"
+#azure network vnet create {{{virtualNetwork}}} --affinity-group {{{affinityGroup}}} -v
+
+{{{clusterCreation}}}
+
+ssh core@{{{clusterConfigEndpoint}}} -p 22001 -i ../../keys/ssh-private.key 'bash -s' < ./etcd-config

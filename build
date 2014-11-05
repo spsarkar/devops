@@ -8,28 +8,20 @@ var async = require('async')
 
 var environmentPath = 'environments/' + yargs.argv._[0] + '/';
 var config = JSON.parse(fs.readFileSync(environmentPath + 'config.json', 'utf8'));
-//var etcdVars = JSON.parse(fs.readFileSync(environmentPath + 'etcd.json', 'utf8'));
+
+var etcdConfig = JSON.parse(fs.readFileSync(environmentPath + 'etcd.json', 'utf8'));
+etcdConfig.redis_servers = JSON.stringify(etcdConfig.redis_servers);
 
 var discoveryToken;
 
-var generateClusters = function(clusters) {
-    var generationScriptTemplate = fs.readFileSync('environments/common/cluster-create', 'utf8');
-    var generationScript = mustache.render(generationScriptTemplate, config);
-
-    async.reduce(clusters, generationScript, function(memo, cluster, callback) {
+var generateClusters = function(clusters, callback) {
+    async.reduce(clusters, "", function(memo, cluster, callback) {
         console.log('generating cluster config files for ' + cluster.name);
 
         generateCluster(cluster, function(err, script) {
             return callback(err, memo + script);
         });
-    }, function(err, generationScript) {
-        if (err) return console.log(err);
-
-        var createClusterPath = environmentPath + 'create-cluster';
-
-        fs.writeFileSync(createClusterPath, generationScript);
-        fs.chmodSync(createClusterPath, 0755);
-    });
+    }, callback);
 };
 
 var generateCluster = function(cluster, callback) {
@@ -61,11 +53,13 @@ var generateCluster = function(cluster, callback) {
     var clusterMachineTemplate = fs.readFileSync('environments/common/cluster-machine', 'utf8');
 
     for (var idx=1; idx <= cluster.instances; idx++) {
-        generationScript += 'azure vm delete ' + cluster.name + "-" + idx + "\n";
+        generationScript += 'azure vm delete -q ' + cluster.name + "-" + idx + "\n";
     }
 
-    generationScript += 'azure service delete ' + cluster.config.cloudServiceName + "\n";
+    generationScript += 'azure service delete -q ' + cluster.config.cloudServiceName + "\n";
     generationScript += 'azure service create ' + cluster.config.cloudServiceName + ' --location "' + config.location + '"\n\n';
+
+    var fleetCtl = "";
 
     for (var idx=1; idx <= cluster.instances; idx++) {
         console.log('building config for instance: ' + idx);
@@ -104,10 +98,31 @@ var generateCluster = function(cluster, callback) {
 };
 
 console.log('fetching cluster discovery token');
+
 request('https://discovery.etcd.io/new', function(err, response, body) {
     if (err) return console.log(err);
 
     discoveryToken = body;
 
-    generateClusters(config.clusters);
+    generateClusters(config.clusters, function(err, createClusterScript) {
+        var generationScriptTemplate = fs.readFileSync('environments/common/cluster-create', 'utf8');
+        console.log(generationScriptTemplate);
+        console.log("----------");
+        config.clusterCreation = createClusterScript;
+        console.dir(config);
+
+        var generationScript = mustache.render(generationScriptTemplate, config);
+
+        var createClusterPath = environmentPath + 'create-cluster';
+
+        fs.writeFileSync(createClusterPath, generationScript);
+        fs.chmodSync(createClusterPath, 0755);
+    });
+
+    var etcdTemplate = fs.readFileSync('environments/common/etcd-config', 'utf8');
+
+    var etcdConfigContents = mustache.render(etcdTemplate, etcdConfig);
+    var etcdConfigPath = environmentPath + 'etcd-config';
+
+    fs.writeFileSync(etcdConfigPath, etcdConfigContents);
 });

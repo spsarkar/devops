@@ -1,6 +1,7 @@
 {
     "location": "East US",
     "virtualNetwork": "n2-network-staging",
+    "clusterConfigEndpoint": "n2-api-staging.cloudapp.net",
     "clusters": [
         {
             "container": "nitrogen/frontdoor",
