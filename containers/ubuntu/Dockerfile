@@ -3,4 +3,4 @@ MAINTAINER Tim Park <tim@nitrogen.io>
 
 RUN \
   apt-get update && \
-  sudo apt-get install -y git wget
+  sudo apt-get install -y git wget software-properties-common
