@@ -1,23 +1,23 @@
 {
     "location": "East US",
     "virtualNetwork": "n2-network-staging",
-    "clusterConfigEndpoint": "n2-api-staging.cloudapp.net",
+    "clusterConfigEndpoint": "n2-frontdoor-staging.cloudapp.net",
     "clusters": [
         {
             "container": "nitrogen/frontdoor",
             "type": "frontdoor",
-            "instances": 2,
+            "instances": 1,
             "name": "n2-frontdoor-staging",
             "config": {
                 "availabilitySet": "n2-frontdoor-staging-as",
-                "cloudServiceName": "n2-api-staging",
+                "cloudServiceName": "n2-frontdoor-staging",
                 "loadBalancingSet": "frontdoorHttp"
             }
         },
         {
             "container": "nitrogen/ingestion",
             "type": "ingestion",
-            "instances": 2,
+            "instances": 1,
             "name": "n2-ingestion-staging",
             "config": {
                 "availabilitySet": "n2-ingestion-staging-as",
@@ -28,7 +28,7 @@
         {
             "container": "nitrogen/registry",
             "type": "registry",
-            "instances": 2,
+            "instances": 1,
             "name": "n2-registry-staging",
             "config": {
                 "availabilitySet": "n2-registry-staging-as",
@@ -39,7 +39,7 @@
         {
             "container": "nitrogen/consumption",
             "type": "consumption",
-            "instances": 2,
+            "instances": 1,
             "name": "n2-consumption-staging",
             "config": {
                 "availabilitySet": "n2-consumption-staging-as",

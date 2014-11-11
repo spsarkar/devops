@@ -34,4 +34,9 @@ export REDIS_SERVERS=`etcdctl get /nitrogen/redis/servers`
 
 export USER_SESSION_SECRET=`etcdctl get /nitrogen/user/session_secret`
 
+export CONSUMPTION_INTERNAL_ENDPOINT=`etcdctl get /nitrogen/endpoints/consumption_http`
+export CONSUMPTION_INTERNAL_WS_ENDPOINT=`etcdctl get /nitrogen/endpoints/consumption_ws`
+export INGESTION_INTERNAL_ENDPOINT=`etcdctl get /nitrogen/endpoints/ingestion`
+export REGISTRY_INTERNAL_ENDPOINT=`etcdctl get /nitrogen/endpoints/registry`
+
 forever server.js

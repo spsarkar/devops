@@ -97,6 +97,22 @@ var generateCluster = function(cluster, callback) {
     return callback(null, generationScript);
 };
 
+var startClusters = function(clusters) {
+    var fleetCommands = clusters.map(function(cluster) {
+        var fleetCommand = "fleetctl start " + cluster.name + "@{";
+
+        var instances = [];
+        for (var idx=1; idx <= cluster.instances; idx++) {
+            instances.push(idx);
+        }
+
+        fleetCommand += instances.join(',') + "}.service";
+        return fleetCommand;
+    });
+
+    return fleetCommands.join('\n');
+};
+
 console.log('fetching cluster discovery token');
 
 request('https://discovery.etcd.io/new', function(err, response, body) {
@@ -106,10 +122,8 @@ request('https://discovery.etcd.io/new', function(err, response, body) {
 
     generateClusters(config.clusters, function(err, createClusterScript) {
         var generationScriptTemplate = fs.readFileSync('environments/common/cluster-create', 'utf8');
-        console.log(generationScriptTemplate);
-        console.log("----------");
         config.clusterCreation = createClusterScript;
-        console.dir(config);
+        config.clusterStart = startClusters(config.clusters);
 
         var generationScript = mustache.render(generationScriptTemplate, config);
 

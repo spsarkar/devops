@@ -4,8 +4,8 @@ cd /var/www
 rm -rf registry; true
 
 # install latest master bits
-git clone http://github.com/nitrogen/registry registry 
-cd registry 
+git clone http://github.com/nitrogen/registry registry
+cd registry
 npm install
 
 export MONGODB_CONNECTION_STRING=`etcdctl get /nitrogen/mongodb_connection_string`
