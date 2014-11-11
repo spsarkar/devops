@@ -1,1 +1,1 @@
-docker push nitrogen/ubuntu
+docker push nitrogen/ubuntu:14.04
