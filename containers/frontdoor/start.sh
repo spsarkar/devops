@@ -4,7 +4,7 @@ cd /var/www
 rm -rf frontdoor; true
 
 # install latest nodejs server
-git clone http://github.com/nitrogen/frontdoor frontdoor
+git clone http://github.com/nitrogenjs/frontdoor frontdoor
 cd frontdoor
 npm install
 
