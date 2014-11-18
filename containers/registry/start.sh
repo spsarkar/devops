@@ -4,7 +4,7 @@ cd /var/www
 rm -rf registry; true
 
 # install latest master bits
-git clone http://github.com/nitrogen/registry registry
+git clone http://github.com/nitrogenjs/registry registry
 cd registry
 npm install
 
