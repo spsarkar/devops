@@ -4,7 +4,8 @@ cd /var/www
 rm -rf frontdoor; true
 
 # install latest nodejs server
-git clone http://github.com/nitrogen/ingestion ingestion 
+git clone http://github.com/nitrogenjs/ingestion ingestion 
+
 cd ingestion 
 npm install
 
