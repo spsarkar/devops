@@ -3,7 +3,7 @@ cd /var/www
 # remove repo if it already exists
 rm -rf consumption; true
 
-git clone http://github.com/nitrogen/consumption consumption
+git clone http://github.com/nitrogenjs/consumption consumption
 cd consumption
 npm install
 
