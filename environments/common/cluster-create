@@ -4,7 +4,3 @@
 {{{clusterCreation}}}
 
 ssh core@{{{clusterConfigEndpoint}}} -p 22001 -i ../../keys/ssh-private.key 'bash -s' < ./etcd-config
-
-export FLEETCTL_TUNNEL={{{clusterConfigEndpoint}}}:22001
-
-{{{clusterStart}}}

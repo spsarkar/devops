@@ -1,6 +1,12 @@
 # devops
 
-The devops project provides a set of devops tools for deploying Nitrogen environments.
+This project provides a set of tools for deploying Nitrogen services based on CoreOS.
+
+## Getting Started
+
+A service environment is defined via a set of JSON description files. This project includes templates for a staging environment and a small production environment in enviroments/staging and environments/production. You can use these as templates for building out your own environments. Simply copy the whole directory and then edit the config.json and etcd.json files.
+
+Config.json is
 
 ## Nitrogen Project
 

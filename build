@@ -10,7 +10,7 @@ var environmentPath = 'environments/' + yargs.argv._[0] + '/';
 var config = JSON.parse(fs.readFileSync(environmentPath + 'config.json', 'utf8'));
 
 var etcdConfig = JSON.parse(fs.readFileSync(environmentPath + 'etcd.json', 'utf8'));
-etcdConfig.redis_servers = JSON.stringify(etcdConfig.redis_servers);
+etcdConfig.redis_servers = JSON.stringify(etcdConfig.redis_servers).replace(/"/gi, "\\\"");
 
 var discoveryToken;
 
@@ -34,6 +34,12 @@ var generateCluster = function(cluster, callback) {
         type: cluster.type
     };
 
+    var ports = cluster.ports.map(function(port) {
+        return "-p " + port.external + ":" + port.internal;
+    });
+
+    unitContext.ports = ports.join(" ");
+
     var unitFile = mustache.render(unitTemplate, unitContext);
     fs.writeFileSync(environmentPath + cluster.name + "@.service", unitFile);
 
@@ -45,7 +51,7 @@ var generateCluster = function(cluster, callback) {
         sshAuthorizedKey: fs.readFileSync('keys/ssh-authorized.key', 'utf8')
     };
 
-    if (['ingestion', 'registry', 'frontdoor', 'consumption'].indexOf(cluster.type) !== -1) {
+    if (['consumption', 'frontdoor', 'ingestion', 'proxy', 'registry'].indexOf(cluster.type) !== -1) {
         cloudConfigContext.metadata = 'type=' + cluster.type;
     }
 
@@ -84,6 +90,7 @@ var generateCluster = function(cluster, callback) {
         clusterMachineContext.sshPort = 22000 + idx;
         clusterMachineContext.virtualNetwork = config.virtualNetwork;
         clusterMachineContext.vmName = cloudConfigContext.hostname;
+        clusterMachineContext.externalPort = cluster.ports[0].external;
 
         var machineScript = mustache.render(clusterMachineTemplate, clusterMachineContext);
 

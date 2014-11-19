@@ -4,8 +4,25 @@
     "clusterConfigEndpoint": "n2-frontdoor-staging.cloudapp.net",
     "clusters": [
         {
+            "container": "nitrogen/nginx-staging",
+            "type": "proxy",
+            "ports": [
+                { "external": 443, "internal": 4443 }
+            ],
+            "instances": 1,
+            "name": "n2-proxy-staging",
+            "config": {
+                "availabilitySet": "n2-proxy-staging-as",
+                "cloudServiceName": "n2-proxy-staging",
+                "loadBalancingSet": "proxyHttps"
+            }
+        },
+        {
             "container": "nitrogen/frontdoor",
             "type": "frontdoor",
+            "ports": [
+                { "external": 80, "internal": 8080 }
+            ],
             "instances": 1,
             "name": "n2-frontdoor-staging",
             "config": {
@@ -17,6 +34,9 @@
         {
             "container": "nitrogen/ingestion",
             "type": "ingestion",
+            "ports": [
+                { "external": 80, "internal": 8080 }
+            ],
             "instances": 1,
             "name": "n2-ingestion-staging",
             "config": {
@@ -28,6 +48,9 @@
         {
             "container": "nitrogen/registry",
             "type": "registry",
+            "ports": [
+                { "external": 80, "internal": 8080 }
+            ],
             "instances": 1,
             "name": "n2-registry-staging",
             "config": {
@@ -39,6 +62,9 @@
         {
             "container": "nitrogen/consumption",
             "type": "consumption",
+            "ports": [
+                { "external": 80, "internal": 8080 }
+            ],
             "instances": 1,
             "name": "n2-consumption-staging",
             "config": {

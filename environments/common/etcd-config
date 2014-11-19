@@ -16,6 +16,8 @@ etcdctl set /nitrogen/sendgrid/api_key              "{{{sendgrid_api_key}}}"
 etcdctl set /nitrogen/redis/servers                 "{{{redis_servers}}}"
 etcdctl set /nitrogen/user/session_secret           "{{{user_session_secret}}}"
 
+etcdctl set /nitrogen/provider/proxy_message_hub/endpoint "{{{proxy_messages_endpoint}}}"
+
 etcdctl set /nitrogen/endpoints/frontdoor           "{{{frontdoor_internal_endpoint}}}"
 etcdctl set /nitrogen/endpoints/consumption_http    "{{{consumption_internal_endpoint}}}"
 etcdctl set /nitrogen/endpoints/consumption_ws      "{{{consumption_internal_ws_endpoint}}}"

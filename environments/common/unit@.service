@@ -5,7 +5,7 @@ Requires=docker.service
 
 [Service]
 ExecStartPre=/usr/bin/docker pull {{{container}}}
-ExecStart=/usr/bin/docker run --name {{{name}}} -p 80:8000 {{{container}}}
+ExecStart=/usr/bin/docker run --name {{{name}}} {{{ports}}} {{{container}}}
 ExecStopPre=/usr/bin/docker kill {{{name}}}
 ExecStop=/usr/bin/docker rm {{{name}}}
 TimeoutStartSec=0
