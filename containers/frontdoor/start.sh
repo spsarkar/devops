@@ -6,6 +6,7 @@ rm -rf frontdoor; true
 # install latest nodejs server
 git clone http://github.com/nitrogenjs/frontdoor frontdoor
 cd frontdoor
+
 npm install
 
 export MONGODB_CONNECTION_STRING=`etcdctl --peers "172.17.42.1:4001" get /nitrogen/mongodb_connection_string`
