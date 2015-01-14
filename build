@@ -14,8 +14,6 @@ var config = JSON.parse(configString);
 configString = mustache.render(configString, config);
 config = JSON.parse(configString);
 
-console.dir(config);
-
 var buildCreateClusterScript = function(config) {
     var scriptTemplate = fs.readFileSync('environments/common/create-cluster.sh', 'utf8');
 
