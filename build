@@ -6,144 +6,49 @@ var async = require('async')
   , request = require('request')
   , yargs = require('yargs');
 
-var environmentPath = 'environments/' + yargs.argv._[0] + '/';
-var config = JSON.parse(fs.readFileSync(environmentPath + 'config.json', 'utf8'));
+var environment = yargs.argv._[0];
+var environmentPath = 'environments/' + environment + '/';
+var configString = fs.readFileSync(environmentPath + 'config.json', 'utf8');
+var config = JSON.parse(configString);
 
-var etcdConfig = JSON.parse(fs.readFileSync(environmentPath + 'etcd.json', 'utf8'));
-etcdConfig.redis_servers = JSON.stringify(etcdConfig.redis_servers).replace(/"/gi, "\\\"");
+configString = mustache.render(configString, config);
+config = JSON.parse(configString);
 
-var discoveryToken;
+console.dir(config);
 
-var generateClusters = function(clusters, callback) {
-    async.reduce(clusters, "", function(memo, cluster, callback) {
-        console.log('generating cluster config files for ' + cluster.name);
+var buildCreateClusterScript = function(config) {
+    var scriptTemplate = fs.readFileSync('environments/common/create-cluster.sh', 'utf8');
 
-        generateCluster(cluster, function(err, script) {
-            return callback(err, memo + script);
-        });
-    }, callback);
+    var createScript = mustache.render(scriptTemplate, config);
+
+    var createClusterPath = environmentPath + 'create-cluster.sh';
+
+    fs.writeFileSync(createClusterPath, createScript);
+    fs.chmodSync(createClusterPath, 0755);    
 };
 
-var generateCluster = function(cluster, callback) {
-    var unitTemplate = fs.readFileSync('environments/common/unit@.service', 'utf8');
+var buildConfigEnvironmentScript = function(config) {
+    var scriptTemplate = fs.readFileSync('environments/common/config-env.sh', 'utf8');
 
-    var unitContext = {
-        container: cluster.container,
-        description: cluster.name,
-        name: cluster.name,
-        type: cluster.type
-    };
+    var createScript = mustache.render(scriptTemplate, config);
 
-    var ports = cluster.ports.map(function(port) {
-        return "-p " + port.external + ":" + port.internal;
-    });
+    var createClusterPath = environmentPath + 'config-env.sh';
 
-    unitContext.ports = ports.join(" ");
-
-    var unitFile = mustache.render(unitTemplate, unitContext);
-    fs.writeFileSync(environmentPath + cluster.name + "@.service", unitFile);
-
-    var generationScript = "";
-
-    // create discovery token for cluster
-    var cloudConfigContext = {
-        discoveryToken: unescape(discoveryToken),
-        sshAuthorizedKey: fs.readFileSync('keys/ssh-authorized.key', 'utf8')
-    };
-
-    if (['consumption', 'frontdoor', 'ingestion', 'proxy', 'registry'].indexOf(cluster.type) !== -1) {
-        cloudConfigContext.metadata = 'type=' + cluster.type;
-    }
-
-    var cloudConfigTemplate = fs.readFileSync('environments/common/cloud-config.yml', 'utf8');
-    var clusterMachineTemplate = fs.readFileSync('environments/common/cluster-machine', 'utf8');
-
-    for (var idx=1; idx <= cluster.instances; idx++) {
-        generationScript += 'azure vm delete -q ' + cluster.name + "-" + idx + "\n";
-    }
-
-    generationScript += 'azure service delete -q ' + cluster.config.cloudServiceName + "\n";
-    generationScript += 'azure service create ' + cluster.config.cloudServiceName + ' --location "' + config.location + '"\n\n';
-
-    var fleetCtl = "";
-
-    for (var idx=1; idx <= cluster.instances; idx++) {
-        console.log('building config for instance: ' + idx);
-
-        cloudConfigContext.name = cluster.name + "-" + idx;
-        cloudConfigContext.hostname = cloudConfigContext.name;
-
-        var cloudConfig = mustache.render(cloudConfigTemplate, cloudConfigContext);
-
-        var clusterMachineContext = cluster.config;
-
-        clusterMachineContext.cloudConfigFilename = cloudConfigContext.name + ".yml";
-        clusterMachineContext.hostname = cloudConfigContext.hostname;
-
-        fs.writeFileSync(environmentPath + clusterMachineContext.cloudConfigFilename, cloudConfig);
-
-        if (idx > 1)
-            clusterMachineContext.connect = "--connect";
-        else
-            clusterMachineContext.connect = "";
-
-        clusterMachineContext.sshPort = 22000 + idx;
-        clusterMachineContext.virtualNetwork = config.virtualNetwork;
-        clusterMachineContext.vmName = cloudConfigContext.hostname;
-        clusterMachineContext.externalPort = cluster.ports[0].external;
-
-        var machineScript = mustache.render(clusterMachineTemplate, clusterMachineContext);
-
-        generationScript += machineScript;
-    }
-
-    generationScript += "\n";
-    generationScript += "echo '=======> finished creation of " + cluster.name + "'\n";
-    generationScript += "\n";
-
-    return callback(null, generationScript);
+    fs.writeFileSync(createClusterPath, createScript);
+    fs.chmodSync(createClusterPath, 0755);    
 };
 
-var startClusters = function(clusters) {
-    var fleetCommands = clusters.map(function(cluster) {
-        var fleetCommand = "fleetctl start " + cluster.name + "@{";
+var buildInstallScript = function(config) {
+    var scriptTemplate = fs.readFileSync('environments/common/install.sh', 'utf8');
 
-        var instances = [];
-        for (var idx=1; idx <= cluster.instances; idx++) {
-            instances.push(idx);
-        }
+    var createScript = mustache.render(scriptTemplate, config);
 
-        fleetCommand += instances.join(',') + "}.service";
-        return fleetCommand;
-    });
+    var createClusterPath = environmentPath + 'install.sh';
 
-    return fleetCommands.join('\n');
+    fs.writeFileSync(createClusterPath, createScript);
+    fs.chmodSync(createClusterPath, 0755);
 };
 
-console.log('fetching cluster discovery token');
-
-request('https://discovery.etcd.io/new', function(err, response, body) {
-    if (err) return console.log(err);
-
-    discoveryToken = body;
-
-    generateClusters(config.clusters, function(err, createClusterScript) {
-        var generationScriptTemplate = fs.readFileSync('environments/common/cluster-create', 'utf8');
-        config.clusterCreation = createClusterScript;
-        config.clusterStart = startClusters(config.clusters);
-
-        var generationScript = mustache.render(generationScriptTemplate, config);
-
-        var createClusterPath = environmentPath + 'create-cluster';
-
-        fs.writeFileSync(createClusterPath, generationScript);
-        fs.chmodSync(createClusterPath, 0755);
-    });
-
-    var etcdTemplate = fs.readFileSync('environments/common/etcd-config', 'utf8');
-
-    var etcdConfigContents = mustache.render(etcdTemplate, etcdConfig);
-    var etcdConfigPath = environmentPath + 'etcd-config';
-
-    fs.writeFileSync(etcdConfigPath, etcdConfigContents);
-});
+buildCreateClusterScript(config);
+buildConfigEnvironmentScript(config);
+buildInstallScript(config);
