@@ -1,12 +1,35 @@
 # devops
 
-This project provides a set of tools for deploying Nitrogen services based on CoreOS.
+This project provides a set of tools for deploying a Nitrogen service using [Deis](http://deis.io).
 
 ## Getting Started
 
-A service environment is defined via a set of JSON description files. This project includes templates for a staging environment and a small production environment in enviroments/staging and environments/production. You can use these as templates for building out your own environments. Simply copy the whole directory and then edit the config.json and etcd.json files.
+If you haven't used Deis before, quickly jump over to [the documentation](http://docs.deis.io/en/latest/) and get to a high level understanding before moving on.
 
-Config.json is
+A service environment is defined via a set of JSON description files. This project includes templates for a staging environment and a small production environment in enviroments/staging and environments/production. You can use these as templates for building out your own environments. Simply copy the whole directory and then modify the config.json files with the configuration for your environment.
+
+## Installing Nitrogen
+
+Once you have your configuration specified, build the creation and installation scripts with (using the staging environment as an example):
+
+`./build staging`
+
+From the environments/staging directory, the next step is to create the cluster:
+
+`./create-cluster.sh`
+
+This will spin up a CoreOS cluster and then install and start Deis on it over the course of about a half hour.
+
+Finally, we need to install the four Nitrogen services: the frontdoor, ingestion, registry and consumption services. You can do that with:
+
+`./install.sh`
+
+This will check out the current version of each of these services from github into the staging environment directory, configure your Deis service with their configuration details, and
+
+Once these are installed, you can subsequently upgrade them by pulling the latest version from github and then pushing that to the Deis cluster:
+
+1. `git pull origin master`
+2. `git push deis master`
 
 ## Nitrogen Project
 
