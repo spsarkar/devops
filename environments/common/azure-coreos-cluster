@@ -148,7 +148,8 @@ def network_config(subnet_name=None, port='59913', public_ip_name=None):
         network.public_ips.public_ips.append(PublicIP(name=public_ip_name))
     if args.deis:
         network.input_endpoints.input_endpoints.append(endpoint_config('http', '80'))
-        network.input_endpoints.input_endpoints.append(endpoint_config('deis', '2222'))
+        network.input_endpoints.input_endpoints.append(
+            ConfigurationSetInputEndpoint('deis', 'tcp', '2222', '2222', 'deis'))
     return network
 
 def data_hd(target_container_url, target_blob_name, target_lun, target_disk_size_in_gb):

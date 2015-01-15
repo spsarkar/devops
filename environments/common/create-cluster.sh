@@ -2,7 +2,9 @@
 
 mv ../common/azure-user-data .
 
-../common/azure-coreos-cluster {{cloudService}} --subscription {{subscription}} --azure-cert azure-cert.pem --num-nodes {{nodes}} --location "{{location}}" --vm-size {{vmSize}} --pip --blob-container-url https://{{azure_storage_account}}.blob.core.windows.net/vhds/ --data-disk --deis --custom-data azure-user-data
+../common/azure-coreos-cluster {{cloudService}} --subscription {{subscription}} --azure-cert azure-cert.pem --num-nodes {{nodes}} --location "{{location}}" --vm-size {{vmSize}} --blob-container-url https://{{azure_storage_account}}.blob.core.windows.net/vhds/ --data-disk --deis --custom-data azure-user-data
+
+export DEISCTL_TUNNEL="{{cloudService}}.cloudapp.net:22001"
 
 ssh-add ssh-cert.key
 deisctl config platform set sshPrivateKey=ssh-cert.key

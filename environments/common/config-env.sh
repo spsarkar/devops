@@ -2,6 +2,7 @@ deis config:set NODE_ENV="{{{node_env}}}"
 
 deis config:set HOST_NAME="{{{host_name}}}"
 deis config:set PORT="{{{port}}}"
+deis config:set EXTERNAL_PORT="{{{external_port}}}"
 
 deis config:set MONGODB_CONNECTION_STRING="{{{mongodb_connection_string}}}"
 deis config:set REDIS_SERVERS="{{{redis_servers}}}"
