@@ -47,6 +47,19 @@ var buildInstallScript = function(config, environment) {
     fs.chmodSync(scriptPath, 0755);
 };
 
+var buildUpgradeScript = function(config, environment) {
+    var templateVariables = mergeDicts(config.cluster, environment);
+
+    var scriptTemplate = fs.readFileSync('templates/upgrade.sh', 'utf8');
+
+    var upgradeScript = mustache.render(scriptTemplate, templateVariables);
+
+    var scriptPath = clusterPath + 'upgrade-' + environment.environment + '.sh';
+
+    fs.writeFileSync(scriptPath, upgradeScript);
+    fs.chmodSync(scriptPath, 0755);
+};
+
 var buildConfigScript = function(config, environment) {
     var templateVariables = mergeDicts(config.cluster, environment);
 
@@ -60,12 +73,13 @@ var buildConfigScript = function(config, environment) {
     fs.chmodSync(createClusterPath, 0755);
 };
 
-var buildInstallScripts = function(config) {
+var buildEnvironmentScripts = function(config) {
     config.environments.forEach(function(environment) {
-        buildInstallScript(config, environment);
         buildConfigScript(config, environment);
+        buildInstallScript(config, environment);
+        buildUpgradeScript(config, environment);
     });
 };
 
 buildCreateClusterScript(config);
-buildInstallScripts(config);
+buildEnvironmentScripts(config);
