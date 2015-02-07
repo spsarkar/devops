@@ -6,3 +6,4 @@ deis create $1-$2
 ../config-env.sh
 
 git push deis master
+deis scale web=$2

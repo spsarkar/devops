@@ -4,7 +4,7 @@ This project provides a set of tools for deploying a Nitrogen service using [Dei
 
 ## Getting Started
 
-If you haven't used Deis before, quickly jump over to [the documentation](http://docs.deis.io/en/latest/) and get to a high level understanding before moving on.
+If you haven't used Deis before, jump over to [the documentation](http://docs.deis.io/en/latest/) and get to a high level understanding before moving on.
 
 A service environment is defined via a set of JSON description files. This project includes templates for a staging environment and a small production environment in enviroments/staging and environments/production. You can use these as templates for building out your own environments. Simply copy the whole directory and then modify the config.json files with the configuration for your environment.
 
