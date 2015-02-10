@@ -6,7 +6,8 @@ deis config:set EXTERNAL_PORT="{{{external_port}}}"
 deis config:set PROTOCOL="{{{protocol}}}"
 
 deis config:set MONGODB_CONNECTION_STRING="{{{mongodb_connection_string}}}"
-deis config:set REDIS_SERVERS="{{{redis_servers}}}"
+deis config:set REDIS_HOST="{{{redis_host}}}"
+deis config:set REDIS_PORT="{{{redis_port}}}"
 
 deis config:set AZURE_STORAGE_ACCOUNT="{{{azure_storage_account}}}"
 deis config:set AZURE_STORAGE_KEY="{{{azure_storage_key}}}"

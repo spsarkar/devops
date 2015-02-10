@@ -12,6 +12,6 @@ sleep 300
 
 deisctl config platform set sshPrivateKey=ssh-cert.key
 deisctl config platform set domain={{domain}}
-#deisctl config builder set image=deis/builder:v1.3-azure
+deisctl config platform set sslKey={{{sslKeyFile}}} sslCert={{{sslCertFile}}}
 deisctl install platform
 deisctl start platform
