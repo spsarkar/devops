@@ -31,7 +31,8 @@ export LOGGLY_PASSWORD=`etcdctl --peers "172.17.42.1:4001" get /nitrogen/loggly/
 export SENDGRID_API_USER=`etcdctl --peers "172.17.42.1:4001" get /nitrogen/sendgrid/api_user`
 export SENDGRID_API_KEY=`etcdctl --peers "172.17.42.1:4001" get /nitrogen/sendgrid/api_key`
 
-export REDIS_SERVERS=`etcdctl --peers "172.17.42.1:4001" get /nitrogen/redis/servers`
+export REDIS_HOST=`etcdctl --peers "172.17.42.1:4001" get /nitrogen/redis/host`
+export REDIS_PORT=`etcdctl --peers "172.17.42.1:4001" get /nitrogen/redis/port`
 
 export USER_SESSION_SECRET=`etcdctl --peers "172.17.42.1:4001" get /nitrogen/user/session_secret`
 export PROXY_MESSAGES_ENDPOINT=`etcdctl --peers "172.17.42.1:4001" get /nitrogen/provider/proxy_message_hub/endpoint`

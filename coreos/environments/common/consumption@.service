@@ -1,0 +1,16 @@
+[Unit]
+Description=Nitrogen Consumption Service
+After=docker.service
+Requires=docker.service
+
+[Service]
+ExecStartPre=/usr/bin/docker pull nitrogen/consumption:latest
+ExecStart=/usr/bin/docker run --name consumption -p 80:8080 nitrogen/consumption
+ExecStopPre=/usr/bin/docker kill consumption
+ExecStop=/usr/bin/docker rm consumption
+TimeoutStartSec=0
+Restart=always
+RestartSec=10s
+
+[X-Fleet]
+X-Conflicts=consumption@*.service

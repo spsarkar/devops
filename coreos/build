@@ -1,0 +1,37 @@
+#!/usr/bin/env node
+
+var async = require('async')
+  , fs = require('fs')
+  , mustache = require('mustache')
+  , request = require('request')
+  , yargs = require('yargs');
+
+var environment = yargs.argv._[0];
+var environmentPath = 'environments/' + environment + '/';
+var configString = fs.readFileSync(environmentPath + 'config.json', 'utf8');
+var config = JSON.parse(configString);
+
+var buildClusters = function(config) {
+    var scriptTemplate = fs.readFileSync('templates/create-clusters.sh', 'utf8');
+
+    var upgradeScript = mustache.render(scriptTemplate, config);
+
+    var scriptPath = environmentPath + 'create-clusters.sh';
+
+    fs.writeFileSync(scriptPath, upgradeScript);
+    fs.chmodSync(scriptPath, 0755);
+};
+
+var buildConfigEtcdScript = function(config) {
+    var scriptTemplate = fs.readFileSync('templates/config-etcd', 'utf8');
+
+    var createScript = mustache.render(scriptTemplate, config);
+
+    var createClusterPath = environmentPath + 'config-etcd';
+
+    fs.writeFileSync(createClusterPath, createScript);
+    fs.chmodSync(createClusterPath, 0755);
+};
+
+buildConfigEtcdScript(config);
+buildClusters(config);

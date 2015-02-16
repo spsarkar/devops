@@ -1,0 +1,16 @@
+[Unit]
+Description=Nitrogen Registry Service
+After=docker.service
+Requires=docker.service
+
+[Service]
+ExecStartPre=/usr/bin/docker pull nitrogen/registry:latest
+ExecStart=/usr/bin/docker run --name registry -p 80:8080 nitrogen/registry
+ExecStopPre=/usr/bin/docker kill registry
+ExecStop=/usr/bin/docker rm registry
+TimeoutStartSec=0
+Restart=always
+RestartSec=10s
+
+[X-Fleet]
+X-Conflicts=registry@*.service
