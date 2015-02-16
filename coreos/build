@@ -25,7 +25,7 @@ var buildClusters = function(config) {
 var buildConfigEtcdScript = function(config) {
     var scriptTemplate = fs.readFileSync('templates/config-etcd', 'utf8');
 
-    var createScript = mustache.render(scriptTemplate, config.environment);
+    var createScript = mustache.render(scriptTemplate, config);
 
     var createClusterPath = environmentPath + 'config-etcd';
 
