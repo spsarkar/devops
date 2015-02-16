@@ -18,6 +18,7 @@ export AZURE_STORAGE_ACCOUNT=`etcdctl --peers "172.17.42.1:4001" get /nitrogen/a
 export AZURE_STORAGE_KEY=`etcdctl --peers "172.17.42.1:4001" get /nitrogen/azure/storage_key`
 
 export HOST_NAME=`etcdctl --peers "172.17.42.1:4001" get /nitrogen/host_name`
+export PORT=8080
 
 #export NEW_RELIC_LICENSE_KEY=`etcdctl get /nitrogen/new_relic/license_key`
 #export NEW_RELIC_APP_NAME=`etcdctl get /nitrogen/new_relic/app_name`
