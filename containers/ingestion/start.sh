@@ -27,6 +27,7 @@ export PROXY_MESSAGES_ENDPOINT=`etcdctl --peers "172.17.42.1:4001" get /nitrogen
 export MONGODB_CONNECTION_STRING=`etcdctl --peers "172.17.42.1:4001" get /nitrogen/mongodb_connection_string`
 export REDIS_HOST=`etcdctl --peers "172.17.42.1:4001" get /nitrogen/redis/host`
 export REDIS_PORT=`etcdctl --peers "172.17.42.1:4001" get /nitrogen/redis/port`
+export REDIS_PASSWORD=`etcdctl --peers "172.17.42.1:4001" get /nitrogen/redis/password`
 
 export AZURE_STORAGE_ACCOUNT=`etcdctl --peers "172.17.42.1:4001" get /nitrogen/azure/storage_account`
 export AZURE_STORAGE_KEY=`etcdctl --peers "172.17.42.1:4001" get /nitrogen/azure/storage_key`
