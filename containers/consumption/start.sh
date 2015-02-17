@@ -30,16 +30,16 @@ export REDIS_PORT=`etcdctl --peers "172.17.42.1:4001" get /nitrogen/redis/port`
 export AZURE_STORAGE_ACCOUNT=`etcdctl --peers "172.17.42.1:4001" get /nitrogen/azure/storage_account`
 export AZURE_STORAGE_KEY=`etcdctl --peers "172.17.42.1:4001" get /nitrogen/azure/storage_key`
 
-#export NEW_RELIC_LICENSE_KEY=`etcdctl get /nitrogen/new_relic/license_key`
-#export NEW_RELIC_APP_NAME=`etcdctl get /nitrogen/new_relic/app_name`
-#export NEW_RELIC_HOME=`etcdctl get /nitrogen/new_relic/home`
+export NEW_RELIC_LICENSE_KEY=`etcdctl get /nitrogen/new_relic/license_key`
+export NEW_RELIC_APP_NAME=`etcdctl get /nitrogen/new_relic/app_name`
+export NEW_RELIC_HOME=`etcdctl get /nitrogen/new_relic/home`
 
-#export LOGGLY_SUBDOMAIN=`etcdctl get /nitrogen/loggly/subdomain`
-#export LOGGLY_INPUT_TOKEN=`etcdctl get /nitrogen/loggly/input_token`
-#export LOGGLY_USERNAME=`etcdctl get /nitrogen/loggly/username`
-#export LOGGLY_PASSWORD=`etcdctl get /nitrogen/loggly/password`
+export LOGGLY_SUBDOMAIN=`etcdctl get /nitrogen/loggly/subdomain`
+export LOGGLY_INPUT_TOKEN=`etcdctl get /nitrogen/loggly/input_token`
+export LOGGLY_USERNAME=`etcdctl get /nitrogen/loggly/username`
+export LOGGLY_PASSWORD=`etcdctl get /nitrogen/loggly/password`
 
-#export SENDGRID_API_USER=`etcdctl get /nitrogen/sendgrid/api_user`
-#export SENDGRID_API_KEY=`etcdctl get /nitrogen/sendgrid/api_key`
+export SENDGRID_API_USER=`etcdctl get /nitrogen/sendgrid/api_user`
+export SENDGRID_API_KEY=`etcdctl get /nitrogen/sendgrid/api_key`
 
 forever server.js

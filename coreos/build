@@ -33,5 +33,17 @@ var buildConfigEtcdScript = function(config) {
     fs.chmodSync(createClusterPath, 0755);
 };
 
+var buildNewRelicScript = function(config) {
+    var scriptTemplate = fs.readFileSync('templates/newrelic-sysmond.service', 'utf8');
+
+    var createScript = mustache.render(scriptTemplate, config);
+
+    var createClusterPath = environmentPath + 'newrelic-sysmond.service';
+
+    fs.writeFileSync(createClusterPath, createScript);
+    fs.chmodSync(createClusterPath, 0755);
+};
+
 buildConfigEtcdScript(config);
+buildNewRelicScript(config);
 buildClusters(config);
