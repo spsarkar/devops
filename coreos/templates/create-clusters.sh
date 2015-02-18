@@ -15,13 +15,13 @@ ssh core@{{{consumption_cloud_service}}}.cloudapp.net -p 22001 < config-etcd
 ssh core@{{{registry_cloud_service}}}.cloudapp.net -p 22001 < config-etcd
 
 ./frontdoor-fleetctl start ../common/frontdoor@{{{frontdoor_node_range}}}.service
-./frontdoor-fleetctl start newrelic-sysmond.service
+./frontdoor-fleetctl start ../common/newrelic-sysmond@{{{frontdoor_node_range}}}.service
 
 ./ingestion-fleetctl start ../common/ingestion@{{{ingestion_node_range}}}.service
-./ingestion-fleetctl start newrelic-sysmond.service
+./ingestion-fleetctl start ../common/newrelic-sysmond@{{{ingestion_node_range}}}.service
 
 ./registry-fleetctl start ../common/registry@{{{registry_node_range}}}.service
-./registry-fleetctl start newrelic-sysmond.service
+./registry-fleetctl start ../common/newrelic-sysmond@{{{registry_node_range}}}.service
 
 ./consumption-fleetctl start ../common/consumption@{{{consumption_node_range}}}.service
-./consumption-fleetctl start newrelic-sysmond.service
+./consumption-fleetctl start ../common/newrelic-sysmond@{{{consumption_node_range}}}.service
