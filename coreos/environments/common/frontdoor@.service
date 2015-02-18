@@ -8,8 +8,10 @@ TimeoutStartSec=0
 ExecStartPre=-/usr/bin/docker kill frontdoor
 ExecStartPre=-/usr/bin/docker rm frontdoor
 ExecStartPre=/usr/bin/docker pull nitrogen/frontdoor:latest
-ExecStart=/usr/bin/docker run -rm --name frontdoor -p 80:8080 nitrogen/frontdoor
+ExecStart=/usr/bin/docker run --rm --name frontdoor -p 80:8080 nitrogen/frontdoor
 ExecStop=/usr/bin/docker stop frontdoor
+Restart=on-failure
+RestartSec=5
 
 [X-Fleet]
 X-Conflicts=frontdoor@*.service

@@ -8,7 +8,7 @@ TimeoutStartSec=0
 ExecStartPre=-/usr/bin/docker kill registry
 ExecStartPre=-/usr/bin/docker rm registry
 ExecStartPre=/usr/bin/docker pull nitrogen/registry:latest
-ExecStart=/usr/bin/docker run -rm --name registry -p 80:8080 nitrogen/registry
+ExecStart=/usr/bin/docker run --rm --name registry -p 80:8080 nitrogen/registry
 ExecStop=/usr/bin/docker stop registry
 
 [X-Fleet]
