@@ -4,13 +4,12 @@ After=docker.service
 Requires=docker.service
 
 [Service]
-ExecStartPre=/usr/bin/docker pull nitrogen/registry:latest
-ExecStart=/usr/bin/docker run --name registry -p 80:8080 nitrogen/registry
-ExecStopPre=/usr/bin/docker kill registry
-ExecStop=/usr/bin/docker rm registry
 TimeoutStartSec=0
-Restart=always
-RestartSec=10s
+ExecStartPre=-/usr/bin/docker kill registry
+ExecStartPre=-/usr/bin/docker rm registry
+ExecStartPre=/usr/bin/docker pull nitrogen/registry:latest
+ExecStart=/usr/bin/docker run -rm --name registry -p 80:8080 nitrogen/registry
+ExecStop=/usr/bin/docker stop registry
 
 [X-Fleet]
 X-Conflicts=registry@*.service

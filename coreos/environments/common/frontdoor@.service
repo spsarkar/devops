@@ -4,13 +4,12 @@ After=docker.service
 Requires=docker.service
 
 [Service]
-ExecStartPre=/usr/bin/docker pull nitrogen/frontdoor:latest
-ExecStart=/usr/bin/docker run --name frontdoor -p 80:8080 nitrogen/frontdoor
-ExecStopPre=/usr/bin/docker kill frontdoor 
-ExecStop=/usr/bin/docker rm frontdoor 
 TimeoutStartSec=0
-Restart=always
-RestartSec=10s
+ExecStartPre=-/usr/bin/docker kill frontdoor
+ExecStartPre=-/usr/bin/docker rm frontdoor
+ExecStartPre=/usr/bin/docker pull nitrogen/frontdoor:latest
+ExecStart=/usr/bin/docker run -rm --name frontdoor -p 80:8080 nitrogen/frontdoor
+ExecStop=/usr/bin/docker stop frontdoor
 
 [X-Fleet]
 X-Conflicts=frontdoor@*.service

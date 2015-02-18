@@ -4,13 +4,12 @@ After=docker.service
 Requires=docker.service
 
 [Service]
-ExecStartPre=/usr/bin/docker pull nitrogen/consumption:latest
-ExecStart=/usr/bin/docker run --name consumption -p 80:8080 nitrogen/consumption
-ExecStopPre=/usr/bin/docker kill consumption
-ExecStop=/usr/bin/docker rm consumption
 TimeoutStartSec=0
-Restart=always
-RestartSec=10s
+ExecStartPre=-/usr/bin/docker kill consumption
+ExecStartPre=-/usr/bin/docker rm consumption
+ExecStartPre=/usr/bin/docker pull nitrogen/consumption:latest
+ExecStart=/usr/bin/docker run -rm --name consumption -p 80:8080 nitrogen/consumption
+ExecStop=/usr/bin/docker stop consumption
 
 [X-Fleet]
 X-Conflicts=consumption@*.service
