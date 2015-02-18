@@ -14,18 +14,14 @@ ssh core@{{{ingestion_cloud_service}}}.cloudapp.net -p 22001 < config-etcd
 ssh core@{{{consumption_cloud_service}}}.cloudapp.net -p 22001 < config-etcd
 ssh core@{{{registry_cloud_service}}}.cloudapp.net -p 22001 < config-etcd
 
-export FLEETCTL_TUNNEL={{{frontdoor_cloud_service}}}.cloudapp.net:22001
-fleetctl start ../common/frontdoor@{{{frontdoor_node_range}}}.service
-fleetctl start newrelic-sysmond.service
+./frontdoor-fleetctl start ../common/frontdoor@{{{frontdoor_node_range}}}.service
+./frontdoor-fleetctl start newrelic-sysmond.service
 
-export FLEETCTL_TUNNEL={{{ingestion_cloud_service}}}.cloudapp.net:22001
-fleetctl start ../common/ingestion@{{{ingestion_node_range}}}.service
-fleetctl start newrelic-sysmond.service
+./ingestion-fleetctl start ../common/ingestion@{{{ingestion_node_range}}}.service
+./ingestion-fleetctl start newrelic-sysmond.service
 
-export FLEETCTL_TUNNEL={{{consumption_cloud_service}}}.cloudapp.net:22001
-fleetctl start ../common/consumption@{{{consumption_node_range}}}.service
-fleetctl start newrelic-sysmond.service
+./registry-fleetctl start ../common/registry@{{{registry_node_range}}}.service
+./registry-fleetctl start newrelic-sysmond.service
 
-export FLEETCTL_TUNNEL={{{registry_cloud_service}}}.cloudapp.net:22001
-fleetctl start ../common/registry@{{{registry_node_range}}}.service
-fleetctl start newrelic-sysmond.service
+./consumption-fleetctl start ../common/consumption@{{{consumption_node_range}}}.service
+./consumption-fleetctl start newrelic-sysmond.service
