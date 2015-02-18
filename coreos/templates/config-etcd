@@ -3,7 +3,7 @@ etcdctl set /nitrogen/host_name "{{{host_name}}}"
 etcdctl set /nitrogen/internal_port "{{{internal_port}}}"
 etcdctl set /nitrogen/external_port "{{{external_port}}}"
 etcdctl set /nitrogen/protocol "{{{protocol}}}"
-vi
+
 etcdctl set /nitrogen/access_token_signing_key "{{{access_token_signing_key}}}"
 etcdctl set /nitrogen/user/session_secret "{{{user_session_secret}}}"
 
