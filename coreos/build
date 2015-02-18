@@ -44,6 +44,25 @@ var buildNewRelicScript = function(config) {
     fs.chmodSync(createClusterPath, 0755);
 };
 
+var buildFleetctlScripts = function(config) {
+    ['frontdoor', 'ingestion', 'registry', 'consumption'].forEach(function(service) {
+        var sshTemplate = fs.readFileSync('templates/cluster-ssh', 'utf8');
+        var sshScript = mustache.render(sshTemplate, { cloud_service: config[service + '_cloud_service'] });
+
+        var sshPath = environmentPath + service + '-ssh';
+        fs.writeFileSync(sshPath, sshScript);
+        fs.chmodSync(sshPath, 0755);
+
+        var fleetctlTemplate = fs.readFileSync('templates/cluster-fleetctl', 'utf8');
+        var fleetctlScript = mustache.render(fleetctlTemplate, { cloud_service: config[service + '_cloud_service'] });
+
+        var fleetctlPath = environmentPath + service + '-fleetctl';
+        fs.writeFileSync(fleetctlPath, fleetctlScript);
+        fs.chmodSync(fleetctlPath, 0755);
+    });
+};
+
 buildConfigEtcdScript(config);
 buildNewRelicScript(config);
 buildClusters(config);
+buildFleetctlScripts(config);

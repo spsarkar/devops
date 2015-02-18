@@ -1,0 +1,1 @@
+FLEETCTL_TUNNEL="{{{cloud_service}}}.cloudapp.net:22001" fleetctl $@

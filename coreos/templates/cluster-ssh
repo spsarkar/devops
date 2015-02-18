@@ -1,0 +1,1 @@
+ssh core@{{{cloud_service}}}.cloudapp.net -p $1
