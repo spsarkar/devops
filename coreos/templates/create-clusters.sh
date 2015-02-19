@@ -9,6 +9,9 @@
 ssh-add ssh-cert.key
 
 # allow clusters time to spin up
+cp ../common/fleet-status .
+cp ../common/fleet-upgrade .
+
 sleep 300
 
 # configure clusters
