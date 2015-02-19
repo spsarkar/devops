@@ -59,6 +59,16 @@ var buildFleetctlScripts = function(config) {
         var fleetctlPath = environmentPath + service + '-fleetctl';
         fs.writeFileSync(fleetctlPath, fleetctlScript);
         fs.chmodSync(fleetctlPath, 0755);
+
+        var upgradeScript = "";
+        for (var node=1; node <= config[service + '_nodes']; node++) {
+            var upgradeTemplate = fs.readFileSync('templates/cluster-upgrade', 'utf8');
+            upgradeScript += mustache.render(upgradeTemplate, { node: node, service: service });
+        }
+
+        var upgradePath = environmentPath + service + '-upgrade';
+        fs.writeFileSync(upgradePath, upgradeScript);
+        fs.chmodSync(upgradePath, 0755);
     });
 };
 

@@ -1,0 +1,6 @@
+echo stopping {{{node}}}
+./{{{service}}}-fleetctl destroy {{{service}}}@{{{node}}}.service
+sleep 10
+echo starting {{{node}}}
+./{{{service}}}-fleetctl start ../common/{{{service}}}@{{{node}}}.service
+sleep 30
